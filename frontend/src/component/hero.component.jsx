@@ -91,29 +91,31 @@ function HeroSection() {
       </motion.div>
 
       {/* Image Section */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-        className="relative mt-16 md:mt-0 z-10"
-      >
-        {/* Decorative Frame */}
-        <div className="absolute -inset-4 border border-[#FF6700]/30 rounded-full animate-[spin_10s_linear_infinite] hidden lg:block" />
-        
-        <div 
-          className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] 
-                     rounded-full overflow-hidden border-2 border-[#FF6700] 
-                     shadow-[0_0_50px_rgba(255,103,0,0.2)] grayscale hover:grayscale-0 
-                     transition-all duration-700 ease-in-out group relative"
-        >
-          <div 
-            className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-110" 
-            style={{ backgroundImage: "url('/image.png')" }}
-          />
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-transparent to-transparent opacity-60" />
-        </div>
-      </motion.div>
+     <motion.div
+  initial={{ opacity: 0, scale: 0.8 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ delay: 0.4, duration: 0.8 }}
+  className="relative mt-16 md:mt-0 z-10"
+>
+  {/* Decorative Spinning Frame */}
+  <div className="absolute -inset-4 border border-[#FF6700]/30 rounded-full animate-[spin_10s_linear_infinite] hidden lg:block" />
+  
+  <div 
+    className="w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] 
+               rounded-full overflow-hidden border-2 border-[#FF6700] 
+               shadow-[0_0_50px_rgba(255,103,0,0.3)] 
+               transition-all duration-700 ease-in-out group relative"
+  >
+    {/* Profile Image - Always Colorful */}
+    <div 
+      className="w-full h-full bg-cover bg-center transition-transform duration-700 group-hover:scale-105" 
+      style={{ backgroundImage: "url('/image.png')" }}
+    />
+    
+    {/* Subtle Overlay Gradient for Depth */}
+    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d]/40 via-transparent to-transparent opacity-60" />
+  </div>
+</motion.div>
 
       {/* Scroll Indicator */}
       <motion.div 
