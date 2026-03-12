@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+.custom-scrollbar::-webkit-scrollbar { width: 10px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #444; }
+
+.Fira_Code {
+  font-family: 'Fira Code', monospace;
+}
+
+.JetBrains_Mono{
+  font-family: 'JetBrains Mono';
+}
+
+.Hero{
+   background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+   /* background: red; */
+}
+
+.Zalando_ans_Expanded{
+  font-family: 'Zalando Sans Expanded';
+}
+
+html {
+  scroll-behavior: smooth;
+}

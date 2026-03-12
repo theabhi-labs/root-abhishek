@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+.custom-scrollbar::-webkit-scrollbar { width: 10px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #444; }
+
+.Fira_Code {
+  font-family: 'Fira Code', monospace;
+}
