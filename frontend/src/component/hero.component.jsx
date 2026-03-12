@@ -37,7 +37,7 @@ function HeroSection() {
         >
           <span className="h-[1px] w-8 bg-[#FF6700]"></span>
           <p className="text-[#FF6700] text-sm md:text-base font-mono uppercase tracking-[0.3em]">
-            Available for Hire
+            Let's Build the Future Together
           </p>
         </motion.div>
 
