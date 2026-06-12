@@ -58,10 +58,10 @@ export default function Contact() {
 
           <div className="grid grid-cols-2 gap-4">
             {[
-              { icon: <FaLinkedin />, label: "LinkedIn", color: "#0077b5", link: "https://linkedin.com/in/abhishek-yadav-rootabhi" },
-              { icon: <FaGithub />, label: "GitHub", color: "#ffffff", link: "https://github.com/theabhi-labs" },
+              { icon: <FaLinkedin />, label: "LinkedIn", color: "#0077b5", link: "https://www.linkedin.com/in/abhishek-yadav-rootabhi/" },
+              { icon: <FaGithub />, label: "GitHub", color: "#ffffff", link: "https://github.com/theabhi-labs/" },
               { icon: <FaDiscord />, label: "Discord", color: "#5865F2", link: "https://discord.com/users/anuragabhi" },
-              { icon: <FaEnvelope />, label: "Email", color: "#FF6700", link: "mailto:abhishekyadavcode@gmail.com" },
+              { icon: <FaEnvelope />, label: "Email", color: "#FF6700", link: "mailto:rootabhishekyadav@gmail.com" },
             ].map((social, i) => (
               <motion.a
                 key={i}
