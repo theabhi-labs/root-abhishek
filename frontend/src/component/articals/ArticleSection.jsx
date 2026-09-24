@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiMenu, FiPlus, FiBookOpen } from "react-icons/fi";
 
@@ -8,6 +7,7 @@ import SubtopicList from "./SubtopicList";
 import ContentArea from "./ContentArea";
 import ArticleEditorModal from "./ArticleEditorModal";
 import { SAMPLE_ARTICLES } from "./sampleData";
+import api from "../../config/api";
 
 const STORAGE_KEY = "my_portfolio_articles_v2";
 
@@ -20,11 +20,24 @@ export default function ArticleSection() {
     return SAMPLE_ARTICLES;
   });
 
-  const [activeTopic, setActiveTopic] = useState(articles[0]?.topic || null);
-  const [activeSubtopic, setActiveSubtopic] = useState(articles[0]?.subtopic || null);
+  const [activeTopic, setActiveTopic] = useState(articles[0]?.topic || "javascript");
+  const [activeSubtopic, setActiveSubtopic] = useState(articles[0]?.subtopic || "strings");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // For Mobile
   const [editorOpen, setEditorOpen] = useState(false);
   const [editorInitial, setEditorInitial] = useState(null);
+
+  // Sync with backend on mount
+  useEffect(() => {
+    const fetchArticles = async () => {
+      const data = await api.getArticles();
+      if (data && data.length > 0) {
+        setArticles(data);
+        if (!activeTopic && data[0]?.topic) setActiveTopic(data[0].topic);
+        if (!activeSubtopic && data[0]?.subtopic) setActiveSubtopic(data[0].subtopic);
+      }
+    };
+    fetchArticles();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(articles));
@@ -43,11 +56,24 @@ export default function ArticleSection() {
   }, [articles, activeTopic, activeSubtopic]);
 
   // Actions
-  const handleSave = (payload) => {
+  const handleSave = async (payload) => {
     if (editorInitial?.id) {
+      // Update article
+      try {
+        await api.updateArticle(editorInitial.id, payload);
+      } catch (e) {
+        console.warn('Backend update skipped:', e);
+      }
       setArticles(prev => prev.map(a => a.id === editorInitial.id ? { ...a, ...payload, updatedAt: new Date().toLocaleString() } : a));
     } else {
-      const newArt = { id: uuidv4(), ...payload, createdAt: new Date().toLocaleString(), updatedAt: new Date().toLocaleString() };
+      // Create article
+      let newArt = { ...payload, createdAt: new Date().toLocaleString(), updatedAt: new Date().toLocaleString() };
+      try {
+        const res = await api.createArticle(payload);
+        if (res?.data?.id) newArt.id = res.data.id;
+      } catch (e) {
+        console.warn('Backend create skipped:', e);
+      }
       setArticles(prev => [newArt, ...prev]);
       setActiveTopic(newArt.topic);
       setActiveSubtopic(newArt.subtopic);
@@ -56,16 +82,28 @@ export default function ArticleSection() {
     setEditorInitial(null);
   };
 
+  const handleDelete = async (id, name) => {
+    if (confirm(`Delete ${name || 'this article'}?`)) {
+      try {
+        if (id) await api.deleteArticle(id);
+      } catch (e) {
+        console.warn('Backend delete skipped:', e);
+      }
+      setArticles(prev => prev.filter(a => a.id !== id && !(a.topic === activeTopic && a.subtopic === name)));
+      setActiveSubtopic(null);
+    }
+  };
+
   return (
     <div className="flex flex-col h-[85vh] md:h-[750px] bg-[#080b12] border border-white/10 rounded-3xl overflow-hidden shadow-2xl relative text-gray-200">
       
       {/* 📱 MOBILE HEADER */}
       <div className="md:hidden flex items-center justify-between px-6 py-4 bg-white/[0.02] border-b border-white/5">
-        <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-white/5 rounded-lg text-[#FF6700]">
+        <button onClick={() => setIsSidebarOpen(true)} className="p-2 bg-white/5 rounded-lg text-[#FF6700] cursor-pointer">
           <FiMenu size={20} />
         </button>
-        <span className="font-bold tracking-tighter text-sm uppercase text-gray-400">Documentation</span>
-        <button onClick={() => setEditorOpen(true)} className="p-2 bg-[#FF6700] text-black rounded-lg">
+        <span className="font-bold tracking-tighter text-sm uppercase text-gray-400">Documentation & Articles</span>
+        <button onClick={() => setEditorOpen(true)} className="p-2 bg-[#FF6700] text-black rounded-lg cursor-pointer">
           <FiPlus size={20} />
         </button>
       </div>
@@ -107,10 +145,8 @@ export default function ArticleSection() {
               if (art) { setEditorInitial(art); setEditorOpen(true); }
             }}
             onDelete={(name) => {
-              if(confirm(`Delete ${name}?`)) {
-                setArticles(prev => prev.filter(a => !(a.topic === activeTopic && a.subtopic === name)));
-                setActiveSubtopic(null);
-              }
+              const art = articles.find(a => a.topic === activeTopic && a.subtopic === name);
+              handleDelete(art?.id, name);
             }}
             onNewSubtopic={() => {
               setEditorInitial({ topic: activeTopic, subtopic: "", title: "", summary: "", content: "" });
@@ -141,10 +177,7 @@ export default function ArticleSection() {
                 article={selectedArticle}
                 onEditArticle={(art) => { setEditorInitial(art); setEditorOpen(true); }}
                 onDeleteArticle={(id) => {
-                   if(confirm("Bhai, delete kar du?")) {
-                     setArticles(prev => prev.filter(a => a.id !== id));
-                     setActiveSubtopic(null);
-                   }
+                  handleDelete(id, selectedArticle?.title);
                 }}
                 placeholder={activeTopic ? "Explore the subtopics in the sidebar." : "Your knowledge base is empty."}
               />
