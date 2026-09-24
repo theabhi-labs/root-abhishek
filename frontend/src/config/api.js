@@ -1,13 +1,10 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
-// Helper for authorized headers with aggressive cache-busting
+// Helper for authorized headers
 const getAuthHeaders = () => {
   const token = localStorage.getItem('root_admin_token');
   return {
     'Content-Type': 'application/json',
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0',
     ...(token ? { 'Authorization': `Bearer ${token}` } : {})
   };
 };
@@ -17,9 +14,6 @@ const freshFetch = async (url, options = {}) => {
     cache: 'no-store',
     ...options,
     headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
       ...(options.headers || {})
     }
   });

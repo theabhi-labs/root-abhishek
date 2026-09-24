@@ -8,6 +8,16 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5050',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
   optimizeDeps: {
     // Change 'include' to 'exclude'
     exclude: [
